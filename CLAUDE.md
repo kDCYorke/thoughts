@@ -26,7 +26,10 @@ A self-contained single-page HTML guide for Ari learning Python development. No 
 4. GitHub publishes at `https://<username>.github.io/ari-python-guide`
 
 ### Next steps (pick up here next session)
-- [ ] Create GitHub repo
-- [ ] Rename file to `index.html`, push
-- [ ] Enable GitHub Pages
+- [x] Create GitHub repo (`kDCYorke/thoughts`)
+- [x] Rename file to `index.html`, push
+- [x] Enable GitHub Pages
 - [ ] Share URL with Ari
+
+### Live URL
+https://kdcyorke.github.io/thoughts/
