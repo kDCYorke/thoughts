@@ -1202,7 +1202,8 @@ pip install pygame</code></pre>
         <span class="pun">]</span>
 
         <span class="kw">for</span> r<span class="pun">,</span> row <span class="kw">in</span> <span class="fn">enumerate</span><span class="pun">(</span>buttons<span class="pun">):</span>
-            <span class="kw">for</span> c<span class="pun">,</span> label <span class="kw">in</span> <span class="fn">enumerate</span><span class="pun">(</span>row<span class="pun">):</span>
+            col <span class="pun">=</span> <span class="num">0</span>
+            <span class="kw">for</span> label <span class="kw">in</span> row<span class="pun">:</span>
                 colspan <span class="pun">=</span> <span class="num">2</span> <span class="kw">if</span> label <span class="pun">==</span> <span class="str">"0"</span> <span class="kw">else</span> <span class="num">1</span>
                 btn <span class="pun">=</span> ctk<span class="pun">.</span><span class="cls">CTkButton</span><span class="pun">(</span>
                     self<span class="pun">,</span> text<span class="pun">=</span>label<span class="pun">,</span>
@@ -1211,8 +1212,9 @@ pip install pygame</code></pre>
                     corner_radius<span class="pun">=</span><span class="num">8</span><span class="pun">,</span>
                     command<span class="pun">=</span><span class="kw">lambda</span> l<span class="pun">=</span>label<span class="pun">:</span> self<span class="pun">.</span><span class="fn">press</span><span class="pun">(</span>l<span class="pun">)</span>
                 <span class="pun">)</span>
-                btn<span class="pun">.</span><span class="fn">grid</span><span class="pun">(</span>row<span class="pun">=</span>r<span class="pun">+</span><span class="num">1</span><span class="pun">,</span> column<span class="pun">=</span>c<span class="pun">,</span> padx<span class="pun">=</span><span class="num">5</span><span class="pun">,</span> pady<span class="pun">=</span><span class="num">5</span><span class="pun">,</span>
+                btn<span class="pun">.</span><span class="fn">grid</span><span class="pun">(</span>row<span class="pun">=</span>r<span class="pun">+</span><span class="num">1</span><span class="pun">,</span> column<span class="pun">=</span>col<span class="pun">,</span> padx<span class="pun">=</span><span class="num">5</span><span class="pun">,</span> pady<span class="pun">=</span><span class="num">5</span><span class="pun">,</span>
                          columnspan<span class="pun">=</span>colspan<span class="pun">,</span> sticky<span class="pun">=</span><span class="str">"ew"</span><span class="pun">)</span>
+                col <span class="pun">+=</span> colspan
 
         self<span class="pun">.</span><span class="fn">columnconfigure</span><span class="pun">([</span><span class="num">0</span><span class="pun">,</span><span class="num">1</span><span class="pun">,</span><span class="num">2</span><span class="pun">,</span><span class="num">3</span><span class="pun">],</span> weight<span class="pun">=</span><span class="num">1</span><span class="pun">)</span>
 
