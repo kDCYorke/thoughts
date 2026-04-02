@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CustomTkinter Cheatsheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pixelify+Sans:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --bg2: #eceae4;
+    --ink: #1a1a2e;
+    --ink2: #3d3d5c;
+    --blue: #3b82f6;
+    --blue-light: #dbeafe;
+    --orange: #f97316;
+    --orange-light: #ffedd5;
+    --green: #22c55e;
+    --green-light: #dcfce7;
+    --purple: #8b5cf6;
+    --purple-light: #ede9fe;
+    --yellow: #facc15;
+    --yellow-light: #fef9c3;
+    --red: #ef4444;
+    --card-shadow: 4px 4px 0px var(--ink);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--ink);
+    color: white;
+    padding: 52px 40px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 50%, rgba(139,92,246,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 85% 20%, rgba(59,130,246,0.2) 0%, transparent 40%),
+      radial-gradient(circle at 55% 80%, rgba(34,197,94,0.15) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .pixel-float {
+    position: absolute;
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 22px;
+    opacity: 0.12;
+    animation: float 6s ease-in-out infinite;
+    z-index: 0;
+  }
+  .pixel-float:nth-child(1) { top: 15%; left: 5%;  animation-delay: 0s; }
+  .pixel-float:nth-child(2) { top: 65%; left: 7%;  animation-delay: 1.5s; }
+  .pixel-float:nth-child(3) { top: 20%; right: 6%; animation-delay: 0.8s; }
+  .pixel-float:nth-child(4) { top: 60%; right: 4%; animation-delay: 2.2s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-10px); }
+  }
+
+  .hero-pixel {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: clamp(32px, 6vw, 60px);
+    font-weight: 700;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: rgba(255,255,255,0.7);
+    max-width: 500px;
+    margin: 0 auto 22px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 13px;
+    border-radius: 20px;
+  }
+  .hero-badge.purple { background: var(--purple); color: white; }
+  .hero-badge.blue   { background: var(--blue);   color: white; }
+  .hero-badge.green  { background: var(--green);  color: white; }
+
+  /* ── TOP NAV ── */
+  .nav {
+    background: white;
+    border-bottom: 3px solid var(--ink);
+    padding: 0 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a {
+    display: block;
+    padding: 13px 14px;
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--ink2);
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav a:hover   { color: var(--purple); border-color: var(--purple); }
+  .nav a.back    { color: var(--ink2); margin-right: 8px; }
+  .nav a.back:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 64px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .container { grid-template-columns: repeat(2, 1fr); }
+    .card.full { grid-column: span 2; }
+  }
+  @media (max-width: 600px) {
+    .container { grid-template-columns: 1fr; }
+    .card.wide, .card.full { grid-column: span 1; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: white;
+    border: 3px solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+  }
+  .card.wide { grid-column: span 2; }
+  .card.full { grid-column: span 3; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px 12px;
+    border-bottom: 2px solid var(--ink);
+    background: var(--bg2);
+  }
+
+  .card-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .icon-green  { background: var(--green-light); }
+  .icon-blue   { background: var(--blue-light); }
+  .icon-orange { background: var(--orange-light); }
+  .icon-purple { background: var(--purple-light); }
+  .icon-grey   { background: var(--bg2); }
+
+  .card-title {
+    font-family: 'Pixelify Sans', monospace;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .card-body { padding: 16px 18px; }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-family: 'Pixelify Sans', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-weight: 700;
+    margin: 14px 0 6px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(26,26,46,0.15);
+  }
+  .section-label:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: #1e1e2e;
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    border: 2px solid rgba(255,255,255,0.06);
+    box-shadow: 2px 2px 0 var(--ink);
+    margin: 10px 0 4px;
+    position: relative;
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #cdd6f4;
+  }
+
+  /* syntax */
+  .kw  { color: #cba6f7; }
+  .fn  { color: #89b4fa; }
+  .st  { color: #a6e3a1; }
+  .cm  { color: #6c7086; font-style: italic; }
+  .nu  { color: #fab387; }
+  .cl  { color: #f9e2af; }
+  .pm  { color: #cdd6f4; }
+  .op  { color: #89dceb; }
+
+  code span { display: inline; }
+
+  /* inline code */
+  p code, li code, td code {
+    background: #e8e5f5;
+    color: #5b21b6;
+    border-radius: 5px;
+    padding: 1px 6px;
+    font-size: 12px;
+  }
+
+  /* ── TABLES ── */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink2);
+    padding: 6px 8px;
+    border-bottom: 2px solid var(--ink);
+  }
+  td {
+    padding: 7px 8px;
+    border-bottom: 1px solid rgba(26,26,46,0.1);
+    vertical-align: top;
+    color: var(--ink2);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+
+  /* inline code variants in tables */
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: #1d4ed8;
+    background: var(--blue-light);
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .mono-orange {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: #c2410c;
+    background: var(--orange-light);
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .mono-green {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: #15803d;
+    background: var(--green-light);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .desc { color: var(--ink2); font-size: 13px; }
+
+  /* ── WIDGET GRID ── */
+  .widget-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 700px) {
+    .widget-grid { grid-template-columns: 1fr; }
+  }
+
+  .widget-item {
+    background: var(--bg);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .widget-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1d4ed8;
+    margin-bottom: 3px;
+  }
+  .widget-desc { font-size: 12.5px; color: var(--ink2); }
+
+  /* ── COLOUR SWATCHES ── */
+  .swatch-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .swatch {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink2);
+  }
+  .swatch-dot {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    border: 2px solid var(--ink);
+  }
+
+  /* ── CALLOUT ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin: 12px 0 0;
+    border: 2px solid;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .callout-blue   { background: var(--blue-light);   border-color: var(--blue);   color: #1d4ed8; }
+  .callout-orange { background: var(--orange-light); border-color: var(--orange); color: #c2410c; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 24px 32px 40px;
+    color: var(--ink2);
+    font-size: 13px;
+    border-top: 2px dashed rgba(26,26,46,0.15);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  footer a { color: var(--purple); text-decoration: none; font-weight: 700; }
+  footer a:hover { text-decoration: underline; }
+
+  @media print {
+    .hero, pre { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .card { break-inside: avoid; }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="pixel-float">✦</span>
+  <span class="pixel-float">⬡</span>
+  <span class="pixel-float">◈</span>
+  <span class="pixel-float">✦</span>
+  <div class="hero-pixel">CustomTkinter Cheatsheet</div>
+  <p class="hero-sub">Modern, themed widgets for Python desktop apps — quick reference for widgets, layout, events &amp; patterns</p>
+  <div class="hero-badges">
+    <span class="hero-badge purple">v5.x</span>
+    <span class="hero-badge blue">pip install customtkinter</span>
+    <span class="hero-badge green">Python 3.8+</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="back">← Guide</a>
+  <a href="#setup">Setup</a>
+  <a href="#appearance">Appearance</a>
+  <a href="#widgets">Widgets</a>
+  <a href="#layout">Layout</a>
+  <a href="#controls">Controls</a>
+  <a href="#events">Events</a>
+  <a href="#tips">Tips</a>
+</nav>
+
+<!-- GRID -->
+<div class="container">
+
+  <!-- ── SETUP ── -->
+  <div class="card wide" id="setup">
+    <div class="card-header">
+      <div class="card-icon icon-green">⚙</div>
+      <div class="card-title">Setup &amp; App Skeleton</div>
+    </div>
+    <div class="card-body">
+<pre><span class="kw">import</span> customtkinter <span class="kw">as</span> ctk
+
+<span class="cm"># Appearance: "System" | "Dark" | "Light"</span>
+ctk.<span class="fn">set_appearance_mode</span>(<span class="st">"Dark"</span>)
+<span class="cm"># Theme: "blue" | "green" | "dark-blue"</span>
+ctk.<span class="fn">set_default_color_theme</span>(<span class="st">"blue"</span>)
+
+<span class="kw">class</span> <span class="cl">App</span>(ctk.<span class="cl">CTk</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="pm">self</span>):
+        <span class="fn">super</span>().<span class="fn">__init__</span>()
+        <span class="pm">self</span>.<span class="fn">title</span>(<span class="st">"My App"</span>)
+        <span class="pm">self</span>.<span class="fn">geometry</span>(<span class="st">"800x500"</span>)
+        <span class="pm">self</span>.<span class="fn">minsize</span>(<span class="nu">400</span>, <span class="nu">300</span>)
+        <span class="pm">self</span>.<span class="fn">_build_ui</span>()
+
+    <span class="kw">def</span> <span class="fn">_build_ui</span>(<span class="pm">self</span>):
+        <span class="pm">self</span>.<span class="fn">grid_columnconfigure</span>(<span class="nu">0</span>, weight<span class="op">=</span><span class="nu">1</span>)
+        <span class="pm">self</span>.<span class="fn">grid_rowconfigure</span>(<span class="nu">0</span>, weight<span class="op">=</span><span class="nu">1</span>)
+
+<span class="kw">if</span> __name__ <span class="op">==</span> <span class="st">"__main__"</span>:
+    app <span class="op">=</span> <span class="cl">App</span>()
+    app.<span class="fn">mainloop</span>()</pre>
+    </div>
+  </div>
+
+  <!-- ── APPEARANCE ── -->
+  <div class="card" id="appearance">
+    <div class="card-header">
+      <div class="card-icon icon-orange">◑</div>
+      <div class="card-title">Appearance API</div>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr><th>Function</th><th>Values</th></tr>
+        <tr><td><span class="mono">set_appearance_mode()</span></td><td class="desc">"System" · "Dark" · "Light"</td></tr>
+        <tr><td><span class="mono">get_appearance_mode()</span></td><td class="desc">returns current mode str</td></tr>
+        <tr><td><span class="mono">set_default_color_theme()</span></td><td class="desc">"blue" · "green" · "dark-blue" · path</td></tr>
+        <tr><td><span class="mono">set_widget_scaling()</span></td><td class="desc">float, e.g. 1.2 for 120%</td></tr>
+        <tr><td><span class="mono">set_window_scaling()</span></td><td class="desc">float, scales window size</td></tr>
+      </table>
+      <div class="section-label">Built-in theme colours</div>
+      <div class="swatch-row">
+        <div class="swatch"><div class="swatch-dot" style="background:#1f6aa5"></div>blue-dark</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#3b8ed0"></div>blue-light</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#2fa572"></div>green-dark</div>
+        <div class="swatch"><div class="swatch-dot" style="background:#2cc985"></div>green-light</div>
+      </div>
+      <div class="section-label">Runtime toggle</div>
+<pre>ctk.<span class="fn">set_appearance_mode</span>(<span class="st">"Light"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── WIDGET OVERVIEW ── -->
+  <div class="card full" id="widgets">
+    <div class="card-header">
+      <div class="card-icon icon-blue">▦</div>
+      <div class="card-title">Widget Overview</div>
+    </div>
+    <div class="card-body">
+      <div class="widget-grid">
+        <div class="widget-item">
+          <div class="widget-name">CTkButton</div>
+          <div class="widget-desc">Clickable button with hover, rounded corners, optional image</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkLabel</div>
+          <div class="widget-desc">Static or dynamic text label, supports wrapping &amp; images</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkEntry</div>
+          <div class="widget-desc">Single-line text input, placeholder text, show="*" for passwords</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkTextbox</div>
+          <div class="widget-desc">Scrollable multi-line text editor (replaces tk.Text)</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkCheckBox</div>
+          <div class="widget-desc">Toggle with BooleanVar; onvalue / offvalue supported</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkRadioButton</div>
+          <div class="widget-desc">Grouped exclusions via shared IntVar / StringVar</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkSwitch</div>
+          <div class="widget-desc">iOS-style toggle switch with on/off callbacks</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkSlider</div>
+          <div class="widget-desc">Horizontal/vertical range slider, from_/to, number_of_steps</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkProgressBar</div>
+          <div class="widget-desc">Determinate or indeterminate progress indicator</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkComboBox</div>
+          <div class="widget-desc">Dropdown + editable field; values=[] list, command callback</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkOptionMenu</div>
+          <div class="widget-desc">Dropdown only (no free text); dynamic_resizing option</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkSegmentedButton</div>
+          <div class="widget-desc">Tab-like multi-option selector; values=[]; command callback</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkTabview</div>
+          <div class="widget-desc">Tabbed pane; .add("Name") returns a frame per tab</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkScrollableFrame</div>
+          <div class="widget-desc">Auto-scrollbar container; orientation="vertical"/"horizontal"</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkFrame</div>
+          <div class="widget-desc">Container/panel; fg_color, corner_radius, border_width</div>
+        </div>
+        <div class="widget-item">
+          <div class="widget-name">CTkImage</div>
+          <div class="widget-desc">HiDPI-aware image; light_image, dark_image from PIL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BUTTON ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">◉</div>
+      <div class="card-title">CTkButton</div>
+    </div>
+    <div class="card-body">
+<pre>btn <span class="op">=</span> ctk.<span class="cl">CTkButton</span>(
+    master<span class="op">=</span><span class="pm">self</span>,
+    text<span class="op">=</span><span class="st">"Click me"</span>,
+    command<span class="op">=</span><span class="pm">self</span>.on_click,
+    width<span class="op">=</span><span class="nu">140</span>, height<span class="op">=</span><span class="nu">32</span>,
+    corner_radius<span class="op">=</span><span class="nu">8</span>,
+    fg_color<span class="op">=</span><span class="st">"#1f6aa5"</span>,
+    hover_color<span class="op">=</span><span class="st">"#144870"</span>,
+    text_color<span class="op">=</span><span class="st">"white"</span>,
+    font<span class="op">=</span>(<span class="st">"Helvetica"</span>, <span class="nu">14</span>),
+    state<span class="op">=</span><span class="st">"normal"</span>,   <span class="cm"># or "disabled"</span>
+    image<span class="op">=</span>my_ctk_image,
+    compound<span class="op">=</span><span class="st">"left"</span>,   <span class="cm"># image side</span>
+)
+btn.<span class="fn">pack</span>(pady<span class="op">=</span><span class="nu">8</span>)</pre>
+      <div class="section-label">Methods</div>
+      <table>
+        <tr><td><span class="mono">.configure(text="…")</span></td><td class="desc">Update any param</td></tr>
+        <tr><td><span class="mono">.cget("text")</span></td><td class="desc">Read a param</td></tr>
+        <tr><td><span class="mono">.invoke()</span></td><td class="desc">Trigger command</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── ENTRY ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-green">✎</div>
+      <div class="card-title">CTkEntry</div>
+    </div>
+    <div class="card-body">
+<pre>entry <span class="op">=</span> ctk.<span class="cl">CTkEntry</span>(
+    master<span class="op">=</span><span class="pm">self</span>,
+    placeholder_text<span class="op">=</span><span class="st">"Email…"</span>,
+    width<span class="op">=</span><span class="nu">200</span>, height<span class="op">=</span><span class="nu">36</span>,
+    corner_radius<span class="op">=</span><span class="nu">6</span>,
+    border_width<span class="op">=</span><span class="nu">2</span>,
+    show<span class="op">=</span><span class="st">""</span>,          <span class="cm"># "*" for password</span>
+    textvariable<span class="op">=</span>my_var,
+    justify<span class="op">=</span><span class="st">"left"</span>,
+)
+entry.<span class="fn">pack</span>(pady<span class="op">=</span><span class="nu">8</span>)</pre>
+      <div class="section-label">Read / Write</div>
+<pre>val <span class="op">=</span> entry.<span class="fn">get</span>()
+entry.<span class="fn">delete</span>(<span class="nu">0</span>, <span class="st">"end"</span>)
+entry.<span class="fn">insert</span>(<span class="nu">0</span>, <span class="st">"hello"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── LAYOUT ── -->
+  <div class="card" id="layout">
+    <div class="card-header">
+      <div class="card-icon icon-orange">⊞</div>
+      <div class="card-title">Layout Managers</div>
+    </div>
+    <div class="card-body">
+      <div class="section-label">pack</div>
+<pre>w.<span class="fn">pack</span>(
+    side<span class="op">=</span><span class="st">"top"</span>,   <span class="cm"># top|bottom|left|right</span>
+    fill<span class="op">=</span><span class="st">"x"</span>,     <span class="cm"># x|y|both|none</span>
+    expand<span class="op">=</span><span class="kw">True</span>,
+    padx<span class="op">=</span><span class="nu">10</span>, pady<span class="op">=</span><span class="nu">5</span>,
+)</pre>
+      <div class="section-label">grid</div>
+<pre>w.<span class="fn">grid</span>(
+    row<span class="op">=</span><span class="nu">0</span>, column<span class="op">=</span><span class="nu">1</span>,
+    columnspan<span class="op">=</span><span class="nu">2</span>, rowspan<span class="op">=</span><span class="nu">1</span>,
+    sticky<span class="op">=</span><span class="st">"nsew"</span>,
+    padx<span class="op">=</span>(<span class="nu">4</span>,<span class="nu">8</span>), pady<span class="op">=</span><span class="nu">4</span>,
+)
+frame.<span class="fn">grid_columnconfigure</span>(<span class="nu">1</span>, weight<span class="op">=</span><span class="nu">1</span>)
+frame.<span class="fn">grid_rowconfigure</span>(<span class="nu">0</span>, weight<span class="op">=</span><span class="nu">1</span>)</pre>
+      <div class="section-label">place</div>
+<pre>w.<span class="fn">place</span>(relx<span class="op">=</span><span class="nu">0.5</span>, rely<span class="op">=</span><span class="nu">0.5</span>, anchor<span class="op">=</span><span class="st">"center"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── FRAMES ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-grey">▣</div>
+      <div class="card-title">Frames &amp; Containers</div>
+    </div>
+    <div class="card-body">
+<pre><span class="cm"># Regular frame</span>
+f <span class="op">=</span> ctk.<span class="cl">CTkFrame</span>(
+    master<span class="op">=</span><span class="pm">self</span>,
+    corner_radius<span class="op">=</span><span class="nu">10</span>,
+    border_width<span class="op">=</span><span class="nu">2</span>,
+    fg_color<span class="op">=</span><span class="st">"transparent"</span>,
+)
+
+<span class="cm"># Scrollable frame</span>
+sf <span class="op">=</span> ctk.<span class="cl">CTkScrollableFrame</span>(
+    master<span class="op">=</span><span class="pm">self</span>,
+    label_text<span class="op">=</span><span class="st">"Items"</span>,
+    orientation<span class="op">=</span><span class="st">"vertical"</span>,
+    width<span class="op">=</span><span class="nu">300</span>, height<span class="op">=</span><span class="nu">400</span>,
+)
+
+<span class="cm"># Tabview</span>
+tabs <span class="op">=</span> ctk.<span class="cl">CTkTabview</span>(<span class="pm">self</span>)
+t1 <span class="op">=</span> tabs.<span class="fn">add</span>(<span class="st">"Home"</span>)    <span class="cm"># returns a CTkFrame</span>
+t2 <span class="op">=</span> tabs.<span class="fn">add</span>(<span class="st">"Settings"</span>)
+tabs.<span class="fn">set</span>(<span class="st">"Home"</span>)           <span class="cm"># activate tab</span></pre>
+    </div>
+  </div>
+
+  <!-- ── VARIABLES ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-purple">∮</div>
+      <div class="card-title">Tkinter Variables</div>
+    </div>
+    <div class="card-body">
+<pre><span class="cm"># Reactive variables (use with widgets)</span>
+sv <span class="op">=</span> ctk.<span class="cl">StringVar</span>(value<span class="op">=</span><span class="st">"hello"</span>)
+iv <span class="op">=</span> ctk.<span class="cl">IntVar</span>(value<span class="op">=</span><span class="nu">0</span>)
+bv <span class="op">=</span> ctk.<span class="cl">BooleanVar</span>(value<span class="op">=</span><span class="kw">False</span>)
+dv <span class="op">=</span> ctk.<span class="cl">DoubleVar</span>(value<span class="op">=</span><span class="nu">3.14</span>)
+
+sv.<span class="fn">set</span>(<span class="st">"world"</span>)
+print(sv.<span class="fn">get</span>())
+
+<span class="cm"># Trace changes</span>
+<span class="kw">def</span> <span class="fn">on_change</span>(*args):
+    print(<span class="st">"changed:"</span>, sv.<span class="fn">get</span>())
+sv.<span class="fn">trace_add</span>(<span class="st">"write"</span>, on_change)</pre>
+    </div>
+  </div>
+
+  <!-- ── CONTROLS ── -->
+  <div class="card wide" id="controls">
+    <div class="card-header">
+      <div class="card-icon icon-green">◈</div>
+      <div class="card-title">Common Controls — Quick Reference</div>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th>Widget</th>
+          <th>Key params</th>
+          <th>Get value</th>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkCheckBox</span></td>
+          <td class="desc">variable=bv, text="…", onvalue=True</td>
+          <td><span class="mono-green">bv.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkRadioButton</span></td>
+          <td class="desc">variable=iv, value=1, text="…"</td>
+          <td><span class="mono-green">iv.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkSwitch</span></td>
+          <td class="desc">variable=bv, onvalue=1, offvalue=0</td>
+          <td><span class="mono-green">sw.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkSlider</span></td>
+          <td class="desc">from_=0, to=100, number_of_steps=10</td>
+          <td><span class="mono-green">sl.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkComboBox</span></td>
+          <td class="desc">values=["a","b"], variable=sv, state="readonly"</td>
+          <td><span class="mono-green">cb.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkOptionMenu</span></td>
+          <td class="desc">values=["x","y"], variable=sv, command=fn</td>
+          <td><span class="mono-green">om.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkSegmentedButton</span></td>
+          <td class="desc">values=["A","B","C"], command=fn</td>
+          <td><span class="mono-green">seg.get()</span></td>
+        </tr>
+        <tr>
+          <td><span class="mono">CTkProgressBar</span></td>
+          <td class="desc">mode="determinate", width=200</td>
+          <td><span class="mono-green">pb.set(0.5)</span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── TEXTBOX ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-grey">≡</div>
+      <div class="card-title">CTkTextbox</div>
+    </div>
+    <div class="card-body">
+<pre>tb <span class="op">=</span> ctk.<span class="cl">CTkTextbox</span>(
+    master<span class="op">=</span><span class="pm">self</span>,
+    width<span class="op">=</span><span class="nu">300</span>, height<span class="op">=</span><span class="nu">200</span>,
+    wrap<span class="op">=</span><span class="st">"word"</span>,
+    font<span class="op">=</span>(<span class="st">"Courier"</span>, <span class="nu">13</span>),
+    state<span class="op">=</span><span class="st">"normal"</span>,
+)
+tb.<span class="fn">insert</span>(<span class="st">"end"</span>, <span class="st">"Hello!\n"</span>)
+text <span class="op">=</span> tb.<span class="fn">get</span>(<span class="st">"1.0"</span>, <span class="st">"end"</span>)
+tb.<span class="fn">delete</span>(<span class="st">"1.0"</span>, <span class="st">"end"</span>)
+
+<span class="cm"># Read-only</span>
+tb.<span class="fn">configure</span>(state<span class="op">=</span><span class="st">"disabled"</span>)</pre>
+    </div>
+  </div>
+
+  <!-- ── DIALOGS ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-orange">⬡</div>
+      <div class="card-title">Dialogs &amp; Popups</div>
+    </div>
+    <div class="card-body">
+<pre><span class="kw">from</span> tkinter <span class="kw">import</span> filedialog, messagebox
+
+<span class="cm"># File dialogs (standard tk)</span>
+path <span class="op">=</span> filedialog.<span class="fn">askopenfilename</span>(
+    filetypes<span class="op">=</span>[(<span class="st">"Text"</span>, <span class="st">"*.txt"</span>)])
+save <span class="op">=</span> filedialog.<span class="fn">asksaveasfilename</span>()
+dirp <span class="op">=</span> filedialog.<span class="fn">askdirectory</span>()
+
+<span class="cm"># Message boxes</span>
+messagebox.<span class="fn">showinfo</span>(<span class="st">"Title"</span>, <span class="st">"Message"</span>)
+messagebox.<span class="fn">showerror</span>(<span class="st">"Err"</span>, <span class="st">"Bad!"</span>)
+ok <span class="op">=</span> messagebox.<span class="fn">askyesno</span>(<span class="st">"?"</span>, <span class="st">"Sure?"</span>)
+
+<span class="cm"># CTk input dialog</span>
+dlg <span class="op">=</span> ctk.<span class="cl">CTkInputDialog</span>(
+    text<span class="op">=</span><span class="st">"Enter your name:"</span>,
+    title<span class="op">=</span><span class="st">"Input"</span>)
+result <span class="op">=</span> dlg.<span class="fn">get_input</span>()</pre>
+    </div>
+  </div>
+
+  <!-- ── IMAGES ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-blue">⊕</div>
+      <div class="card-title">CTkImage (HiDPI)</div>
+    </div>
+    <div class="card-body">
+<pre><span class="kw">from</span> PIL <span class="kw">import</span> Image
+
+img <span class="op">=</span> ctk.<span class="cl">CTkImage</span>(
+    light_image<span class="op">=</span>Image.<span class="fn">open</span>(<span class="st">"icon_light.png"</span>),
+    dark_image<span class="op">=</span>Image.<span class="fn">open</span>(<span class="st">"icon_dark.png"</span>),
+    size<span class="op">=</span>(<span class="nu">32</span>, <span class="nu">32</span>),
+)
+
+<span class="cm"># Use in button or label</span>
+ctk.<span class="cl">CTkButton</span>(
+    <span class="pm">self</span>, image<span class="op">=</span>img,
+    text<span class="op">=</span><span class="st">""</span>,          <span class="cm"># icon-only</span>
+    width<span class="op">=</span><span class="nu">40</span>,
+).pack()</pre>
+      <div class="callout callout-orange">Keep a reference — store as <code>self.img = …</code> to prevent garbage collection.</div>
+    </div>
+  </div>
+
+  <!-- ── EVENTS ── -->
+  <div class="card" id="events">
+    <div class="card-header">
+      <div class="card-icon icon-green">⌁</div>
+      <div class="card-title">Events &amp; Bindings</div>
+    </div>
+    <div class="card-body">
+<pre><span class="cm"># Keyboard shortcuts</span>
+<span class="pm">self</span>.<span class="fn">bind</span>(<span class="st">"&lt;Return&gt;"</span>, <span class="kw">lambda</span> e: <span class="pm">self</span>.<span class="fn">submit</span>())
+<span class="pm">self</span>.<span class="fn">bind</span>(<span class="st">"&lt;Control-s&gt;"</span>, <span class="pm">self</span>.save)
+entry.<span class="fn">bind</span>(<span class="st">"&lt;FocusOut&gt;"</span>, <span class="pm">self</span>.validate)
+
+<span class="cm"># Mouse events</span>
+w.<span class="fn">bind</span>(<span class="st">"&lt;Button-1&gt;"</span>, <span class="pm">self</span>.on_left_click)
+w.<span class="fn">bind</span>(<span class="st">"&lt;Double-Button-1&gt;"</span>, handler)
+w.<span class="fn">bind</span>(<span class="st">"&lt;Enter&gt;"</span>, <span class="pm">self</span>.on_hover)
+w.<span class="fn">bind</span>(<span class="st">"&lt;Leave&gt;"</span>, <span class="pm">self</span>.on_leave)
+
+<span class="cm"># after() — schedule a task</span>
+<span class="pm">self</span>.<span class="fn">after</span>(<span class="nu">1000</span>, <span class="pm">self</span>.tick)  <span class="cm"># 1 s delay</span>
+<span class="pm">self</span>.<span class="fn">after_cancel</span>(job_id)</pre>
+    </div>
+  </div>
+
+  <!-- ── TOPLEVEL ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon icon-orange">⬒</div>
+      <div class="card-title">CTkToplevel (2nd Window)</div>
+    </div>
+    <div class="card-body">
+<pre><span class="kw">class</span> <span class="cl">SettingsWindow</span>(ctk.<span class="cl">CTkToplevel</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="pm">self</span>, *args, **kwargs):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(*args, **kwargs)
+        <span class="pm">self</span>.<span class="fn">title</span>(<span class="st">"Settings"</span>)
+        <span class="pm">self</span>.<span class="fn">geometry</span>(<span class="st">"400x300"</span>)
+        <span class="pm">self</span>.<span class="fn">grab_set</span>()  <span class="cm"># modal behaviour</span>
+
+<span class="cm"># Open from main window</span>
+<span class="kw">def</span> <span class="fn">open_settings</span>(<span class="pm">self</span>):
+    win <span class="op">=</span> <span class="cl">SettingsWindow</span>(<span class="pm">self</span>)
+    win.<span class="fn">focus</span>()</pre>
+    </div>
+  </div>
+
+  <!-- ── TIPS ── -->
+  <div class="card full" id="tips">
+    <div class="card-header">
+      <div class="card-icon icon-purple">★</div>
+      <div class="card-title">Tips, Gotchas &amp; Patterns</div>
+    </div>
+    <div class="card-body">
+      <table>
+        <tr>
+          <th style="width:26%">Topic</th>
+          <th>Advice</th>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">Mixing tk + ctk</span></td>
+          <td class="desc">Avoid mixing <code>tk.Widget</code> with CTk containers — appearance won't match; prefer CTk equivalents throughout.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">fg_color="transparent"</span></td>
+          <td class="desc">Use on CTkFrame to let the parent background show through — useful for nested panels.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">Thread safety</span></td>
+          <td class="desc">Never update widgets from a background thread. Use <code>self.after(0, callback)</code> to queue updates on the main loop.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">Image refs</span></td>
+          <td class="desc">Store CTkImage as an instance attribute (e.g. <code>self.img = …</code>) to prevent garbage collection causing blank images.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">Responsive layout</span></td>
+          <td class="desc">Always pair <code>grid(sticky="nsew")</code> with <code>grid_columnconfigure(col, weight=1)</code> on the parent.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">CTkFont</span></td>
+          <td class="desc"><code>f = ctk.CTkFont(family="Helvetica", size=14, weight="bold")</code> — pass to <code>font=</code> param for consistent scaling.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">Custom theme</span></td>
+          <td class="desc">Pass a JSON file path to <code>set_default_color_theme("my_theme.json")</code>. Copy an existing theme from the CTk source as a starting point.</td>
+        </tr>
+        <tr>
+          <td><span class="mono-orange">DPI on Windows</span></td>
+          <td class="desc">Call <code>ctk.deactivate_automatic_dpi_awareness()</code> before creating the app if you manage DPI yourself.</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  customtkinter by Tom Schimansky &nbsp;·&nbsp;
+  <a href="https://github.com/TomSchimansky/CustomTkinter">github.com/TomSchimansky/CustomTkinter</a>
+  &nbsp;·&nbsp; MIT Licence &nbsp;·&nbsp;
+  <a href="index.html">← Back to Guide</a>
+</footer>
+
+</body>
+</html>
